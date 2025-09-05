@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+  - job.yaml
+  - pvc.yaml
+  - pv.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: db-init-scripts
+    files: # using files here as we want to create a whole file
+      - sql/schema-quotes-init.sql
+secretGenerator:
+  - name: postgres-secrets
+    envs:
+      - env/.env.postgres

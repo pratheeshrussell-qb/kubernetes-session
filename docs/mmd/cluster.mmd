@@ -1,0 +1,88 @@
+---
+config:
+  layout: dagre
+---
+flowchart LR
+    subgraph Cluster[Kind Cluster]
+        sc[StorageClass]
+        lb[Loadbalance/nodeport]
+        ingressController[IngressController]
+        pv[PersistentVolume]
+
+        subgraph Node
+            subgraph Namespace[Namespace: demo-app]
+                subgraph FE[Frontend app]
+                    feDep[Deployment]
+                    feRS[ReplicaSet]
+                    fePod[Pod]
+                    feSvc[Service]
+                    feIngress[Ingress]
+                    feCM[ConfigMap]
+                end
+
+                subgraph BE[Backend app]
+                    beDep[Deployment]
+                    beRS[ReplicaSet]
+                    bePod[Pod]
+                    beSvc[Service]
+                    beIngress[Ingress]
+                    beCM[ConfigMap]
+                    beSecret[Secret]
+                end
+
+                subgraph DB[Postgres]
+                    dbDep[Deployment]
+                    dbRS[ReplicaSet]
+                    dbPod[Pod]
+                    dbPVC[PVC]
+                    dbSvc[Service]
+                    dbJob[Job]
+                    dbCM[ConfigMap]
+                    dbSecret[Secret]
+                end
+            end
+        end
+    end
+
+    
+
+    %% Workload hierarchy
+    feDep --> feRS --> fePod
+    fePod --o feCM
+
+    beDep --> beRS --> bePod
+    bePod --o beCM
+    bePod --o beSecret
+
+    dbDep --> dbRS --> dbPod 
+    dbPod --o dbPVC --o pv
+    dbPod --o dbCM
+    dbPod --o dbSecret
+
+    %% Networking
+    feIngress e11@--> feSvc e12@--> fePod
+
+    fePod e13@-->|/backend| beIngress e14@--> beSvc e15@--> bePod
+    bePod e16@--> dbSvc e17@--> dbPod
+    
+    ingressController e18@-->|/frontend| feIngress
+    ingressController e19@-->|/backend| beIngress
+    lb e10@--> ingressController
+    client e10@--> lb
+
+    %% Cluster-level bindings
+    dbPVC --o sc
+    feIngress --o ingressController
+    beIngress --o ingressController
+
+    classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+    class e10 animate
+    class e11 animate
+    class e12 animate
+    class e13 animate
+    class e14 animate
+    class e15 animate
+    class e16 animate
+    class e17 animate
+    class e18 animate
+    class e19 animate

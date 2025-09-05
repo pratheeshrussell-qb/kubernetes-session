@@ -1,0 +1,44 @@
+services:
+  frontend:
+    image: quote-frontend
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  backend:
+    image: quote-backend
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: quotesdb
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_TLS: false
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  db:
+    image: quote-postgres
+    volumes:
+      - ./postgres_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: quotesdb
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+# volumes:
+#   postgres-data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-quotes-db
+spec:
+  template:
+    spec:
+      containers:
+        - name: psql
+          image: postgres:15
+          env:
+          - name: PG_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secrets
+                key: POSTGRES_PASSWORD
+          command: ["sh", "-c"]
+          args:
+            - >
+              psql "postgresql://postgres:${PG_ROOT_PASSWORD}@postgres-svc:5432/quotesdb" -f /init/schema-quotes-init.sql
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /init
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: db-init-scripts
+      restartPolicy: OnFailure

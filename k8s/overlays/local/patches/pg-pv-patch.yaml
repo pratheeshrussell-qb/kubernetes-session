@@ -1,0 +1,14 @@
+- op: replace
+  path: /spec/storageClassName
+  value: local-standard
+
+# replace volume type from local to hostPath
+- op: remove
+  path: /spec/local
+
+- op: add
+  path: /spec/hostPath
+  value: 
+    path: /var/local-path-provisioner/postgres_data
+  
+  

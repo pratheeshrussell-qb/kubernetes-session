@@ -1,0 +1,28 @@
+resources:
+  - sc.yaml
+  - ./app
+
+# only for our kind environment
+  - ./pgadmin
+  - ./ingress/service.yaml
+
+patches:
+  - target:
+      kind: PersistentVolume
+      name: postgres-pv
+    path: ./patches/pg-pv-patch.yaml
+  - target:
+      kind: PersistentVolumeClaim
+      name: postgres-pvc
+      namespace: demo-app
+    path: ./patches/pg-pvc-patch.yaml
+  - target:
+      kind: Ingress
+      name: demo-app-be-ingress
+      namespace: demo-app
+    path: ./patches/ingress-patch.yaml
+  - target:
+      kind: Ingress
+      name: demo-app-fe-ingress
+      namespace: demo-app
+    path: ./patches/ingress-patch.yaml
