@@ -246,16 +246,48 @@ kubectl cluster-info
 kubectl get nodes
 ```
 
-## Get Events
+### Get Events
 ```sh
 kubectl get events --sort-by=.metadata.creationTimestamp
 kubectl get events --field-selector involvedObject.kind=pod,involvedObject.name=mypod
 ``` 
 
-## Metrics
+### Metrics
 
 If metrics is enabled. To get resource usage (CPU/Memory) of pods and nodes
 ```sh
 kubectl top pod
 kubectl top node
 ```
+
+#### View raw metrics
+This is the raw metrics API, that is usually scraped by prometheus. You can use kubectl proxy to access it locally
+```sh
+kubectl proxy --port=12500
+```
+Then access the metrics endpoint in your browser or using curl
+```
+http://localhost:12500/metrics
+
+http://127.0.0.1:12500/api/v1/nodes/<node-name>/proxy/metrics/cadvisor
+```
+
+### CRD
+To list CRDs
+```sh
+kubectl get crds
+
+# better option to list CRDs with more details
+
+kubectl get crds -o custom-columns="NAME:.spec.names.plural,SHORTNAMES:.spec.names.shortNames,SCOPE:.spec.scope"
+```
+
+#### ArgoCD related commands
+```sh
+kubectl get applications -n argocd
+kubectl get appprojects -n argocd
+```
+patch finalizers to force delete an application stuck in terminating state
+```sh
+kubectl patch application <app-name> -n argocd -p '{"metadata":{"finalizers":[]}}' --type=merge
+``` 

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: quote-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: demo-app
+    server: https://kubernetes.default.svc
+  source:
+    path: k8s/overlays/local
+    repoURL: https://github.com/pratheeshrussell-qb/kubernetes-session
+    targetRevision: argocd
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

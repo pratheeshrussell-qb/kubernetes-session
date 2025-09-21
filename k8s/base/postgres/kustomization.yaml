@@ -9,6 +9,8 @@ resources:
 
 generatorOptions:
   disableNameSuffixHash: true
+commonAnnotations:
+  argocd.argoproj.io/hook: PreSync
 configMapGenerator:
   - name: db-init-scripts
     files: # using files here as we want to create a whole file

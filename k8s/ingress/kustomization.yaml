@@ -1,0 +1,6 @@
+resources:
+  - https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+
+commonAnnotations:
+  argocd.argoproj.io/ignore-healthcheck: "true"
+#   argocd.argoproj.io/sync-wave: "-1"

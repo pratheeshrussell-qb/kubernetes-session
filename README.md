@@ -26,17 +26,13 @@ kind load docker-image quote-backend --name kube-lab-cluster
 kind load docker-image nginx:alpine dpage/pgadmin4 postgres:15 --name kube-lab-cluster
 ```
 
+## Add Argocd
+[Refer argocd.md](argo-cd/README.md)
 
-## Add Ingress controller
-
-[Refer ingress.md](k8s/ingress/README.md)
 
 ## Deploy the apps
+use argo cd to deploy the apps from the argocd UI or run the below command
 
-```sh
-cd k8s/overlays/local
-kubectl apply -k .
-```
 
 ## Cleanup 
 
